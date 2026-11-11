@@ -193,6 +193,35 @@ if uploaded_file is not None:
         st.error(f"Unable to read the file: {error}")
         st.stop()
 
+    st.caption(
+        "Row 1 is the first company below the headings. "
+        "Both starting and ending rows are included."
+    )
+
+    start_row = st.number_input(
+        "Starting row",
+        min_value=1,
+        max_value=len(df),
+        value=1,
+        step=1,
+    )
+
+    end_row = st.number_input(
+        "Ending row",
+        min_value=1,
+        max_value=len(df),
+        value=len(df),
+        step=1,
+    )
+
+    if start_row > end_row:
+        st.error("Starting row must not exceed ending row.")
+        st.stop()
+
+    selected_df = df.iloc[int(start_row) - 1:int(end_row)]
+
+    st.write(f"Rows to process: {len(selected_df)}")
+    
     if st.button("Start Enrichment"):
         progress_bar = st.progress(0)
         status_text = st.empty()
@@ -205,7 +234,9 @@ if uploaded_file is not None:
             )
         }
 
-        for index, row in df.iterrows():
+                for processed_count, (index, row) in enumerate(
+            selected_df.iterrows(), start=1
+        ):
             company = (
                 ""
                 if is_blank(row["company_name"])
@@ -213,7 +244,7 @@ if uploaded_file is not None:
             )
 
             status_text.text(
-                f"Processing [{index + 1}/{len(df)}]: "
+                f"Processing [{processed_count}/{len(selected_df)}]: "
                 f"{company or 'Blank company name'}..."
             )
 
@@ -290,7 +321,7 @@ if uploaded_file is not None:
                     )
 
             progress_bar.progress(
-                (index + 1) / len(df)
+                processed_count / len(selected_df)
             )
 
         status_text.text("Complete!")
