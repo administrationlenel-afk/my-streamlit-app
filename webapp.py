@@ -248,29 +248,40 @@ if uploaded_file is not None:
                 f"{company or 'Blank company name'}..."
             )
 
-            # Find Website: original research logic retained.
+            # Find Website
             if company and is_blank(row["Website"]):
                 try:
-                    results = ddgs.text(
-                        f"{company} UK accounting website",
-                        max_results=3,
+                    results = list(
+                        ddgs.text(
+                            f'"{company}" UK official website',
+                            max_results=3,
+                        ) or []
                     )
 
-                    for result in results or []:
+                    if not results:
+                        st.warning(
+                            f"No search results returned for: {company}"
+                        )
+
+                    for result in results:
                         website = result.get("href", "")
 
                         if (
-                            "bing.com" not in website
+                            website
+                            and "bing.com" not in website
                             and "duckduckgo.com" not in website
                         ):
                             df.at[index, "Website"] = website
                             break
 
-                    time.sleep(1.5)
+                except Exception as error:
+                    st.error(
+                        f"Search failed for {company}: "
+                        f"{type(error).__name__}: {error}"
+                    )
 
-                except Exception:
-                    pass
-
+                time.sleep(1.5)
+                
             # Find Email: original extraction logic retained.
             url = str(df.at[index, "Website"])
 
