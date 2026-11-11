@@ -162,7 +162,7 @@ if uploaded_file is not None:
                 "Please give each column a unique name."
             )
 
-                if "company_name" not in df.columns:
+        if "company_name" not in df.columns:
             if "Company" in df.columns or "name" in df.columns:
                 source_column = (
                     "Company" if "Company" in df.columns else "name"
