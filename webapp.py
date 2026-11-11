@@ -234,7 +234,7 @@ if uploaded_file is not None:
             )
         }
 
-                for processed_count, (index, row) in enumerate(
+        for processed_count, (index, row) in enumerate(
             selected_df.iterrows(), start=1
         ):
             company = (
