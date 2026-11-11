@@ -162,9 +162,13 @@ if uploaded_file is not None:
                 "Please give each column a unique name."
             )
 
-        if "Company" in df.columns or "name" in df.columns:
-            source_column = "Company" if "Company" in df.columns else "name"
-            df = df.rename(columns={source_column: "company_name"})
+                if "company_name" not in df.columns:
+            if "Company" in df.columns or "name" in df.columns:
+                source_column = (
+                    "Company" if "Company" in df.columns else "name"
+                )
+                df = df.rename(
+                    columns={source_column: "company_name"}
                 )
             else:
                 raise ValueError(
